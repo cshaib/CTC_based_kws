@@ -1,6 +1,6 @@
  {
         "label_model_path": "",
-        "pretrain_label_data": "/Users/chantal/Desktop/StMichaels/669_audio_debug_only.csv",
+        "pretrain_label_data": "/h/chantal/keyword_spotting/CTC_based_kws/669_audio_debug_only.csv",
         "train_wakeword_data": "",
         "test_data": ""
  } 

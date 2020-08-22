@@ -23,12 +23,16 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
 
     # Setting common hyperparameters
     input_dim = (max_input_len, n_mfcc)
+    # sample data
+    one_example = next(iter(label_train_loader))
+    
     output_dim = num_labels + 1 # len labels that I want to output (length of the num diff labels + CTC blank symbol)
     n_layers = 3 # following paper params
 
     print(input_dim, output_dim, n_layers)
 
     # create model TODO: DOUBLE CHECK OUTPUT DIMENSION 
+    # print(one_example[3].shape[1:], 'SHAPE')
     label_model = LabelModel(input_dim=n_mfcc, hidden_dim=96, output_dim=149, n_layers=3)
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -63,10 +67,11 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
             list_in_len = torch.tensor([x[0].item() for x in list_in_len])
             list_targ_len = torch.tensor([x[0].item() for x in list_targ_len])
 
-            print(list_in_len)
-            print(list_targ_len)
-            print('\n\n\n\n\n\n')
-
+#            print(list_in_len)
+#            print(list_targ_len)
+#            print('\n\n\n\n\n\n')
+            
+            print(len(list_in_len), len(list_targ_len))
             loss = criterion(out, label.to(device).float(), list_in_len, list_targ_len)
             loss.backward()
             optimizer.step()

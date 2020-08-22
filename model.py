@@ -29,10 +29,14 @@ class LabelModel(nn.Module):
         
     def forward(self, x, h):
         x = x.permute(0, 2, 1)
+        # x = x.unsqueeze(-1)
         out, h = self.gru(x, h)
-        out = self.linear(self.relu(out[:,-1]))
-        out = self.softmax(out)
+        # print(out.shape, h.shape, 'OUT AND H SHAPE AFTER GRU')
+        # out = self.linear(self.relu(out[:,-1]))
+        # print(out.shape, "OUT AFTER LINEAR")
+        out = self.softmax(out, dim=2)
         # out = out.transpose(0,1)
+        print(out.shape)
         return out, h
     
     def init_hidden(self, batch_size):
