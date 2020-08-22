@@ -55,7 +55,7 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
         avg_loss = 0.
         counter = 0
         
-        for counter, (list_targ_len, list_in_len, _, x, label) in enumerate(label_train_loader):
+        for counter, (original_len, original_label_len, _, x, label) in enumerate(label_train_loader):
 
             h = h.data
             # print(h.shape, x.shape)
@@ -64,15 +64,15 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
             out, h = label_model(x.to(device).float(), h)
 
             # todo these switch for some reason....
-            list_in_len = torch.tensor([x[0].item() for x in list_in_len])
-            list_targ_len = torch.tensor([x[0].item() for x in list_targ_len])
+            # list_in_len = torch.tensor([x[0].item() for x in list_in_len])
+            # list_targ_len = torch.tensor([x[0].item() for x in list_targ_len])
 
 #            print(list_in_len)
 #            print(list_targ_len)
 #            print('\n\n\n\n\n\n')
             
-            print(len(list_in_len), len(list_targ_len))
-            loss = criterion(out, label.to(device).float(), list_in_len, list_targ_len)
+            print(len(original_len), len(original_label_len))
+            loss = criterion(out, label.to(device).float(), original_len, original_label_len)
             loss.backward()
             optimizer.step()
             avg_loss += loss.item()

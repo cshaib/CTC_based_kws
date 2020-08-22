@@ -85,4 +85,4 @@ class AudioDataset(torch.utils.data.Dataset):
     X = self.data[self.data['unique_id'] == ID]['padded_audio'].values[0]
     y = self.labels[ID]
 
-    return self.original_len, self.original_label_len, self.list_IDs, torch.from_numpy(X), torch.tensor(y) 
+    return original_len, original_label_len, self.list_IDs, torch.from_numpy(X), torch.tensor(y) 
