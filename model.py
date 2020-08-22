@@ -36,7 +36,6 @@ class LabelModel(nn.Module):
         # print(out.shape, "OUT AFTER LINEAR")
         out = self.softmax(out, dim=2)
         # out = out.transpose(0,1)
-        print(out.shape)
         return out, h
     
     def init_hidden(self, batch_size):
