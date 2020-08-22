@@ -17,22 +17,25 @@ from model import LabelModel
 
 from blick import BlickLoader
 
-def train_label_model(label_train_loader, num_labels, learn_rate, hidden_dim=256, EPOCHS=5):
+def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate, hidden_dim=256, EPOCHS=5, batch_size=16, n_mfcc=30):
     
     ####################### TODO: Add to config file ####################### 
 
     # Setting common hyperparameters
-    input_dim = next(iter(label_train_loader))[0].shape[2]
+    input_dim = (max_input_len, n_mfcc)
     output_dim = num_labels + 1 # len labels that I want to output (length of the num diff labels + CTC blank symbol)
     n_layers = 3 # following paper params
 
-    # create model
-    label_model = LabelModel(input_dim=input_dim, hidden_dim=96, output_dim=output_dim, n_layers=3)
+    print(input_dim, output_dim, n_layers)
 
+    # create model TODO: DOUBLE CHECK OUTPUT DIMENSION 
+    label_model = LabelModel(input_dim=n_mfcc, hidden_dim=96, output_dim=149, n_layers=3)
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_cuda else "cpu")
     label_model.to(device)
     
     # Defining loss function and optimizer
-    criterion = nn.CTCLoss(reduction=None)
+    criterion = nn.CTCLoss(blank=41)
     optimizer = torch.optim.Adam(label_model.parameters(), lr=learn_rate)
     
     label_model.train()
@@ -48,15 +51,23 @@ def train_label_model(label_train_loader, num_labels, learn_rate, hidden_dim=256
         avg_loss = 0.
         counter = 0
         
-        for counter, x, label in enumerate(label_train_loader):
-        
-            h = h.data
+        for counter, (list_targ_len, list_in_len, _, x, label) in enumerate(label_train_loader):
 
+            h = h.data
+            # print(h.shape, x.shape)
             label_model.zero_grad()
             
             out, h = label_model(x.to(device).float(), h)
 
-            loss = criterion(out, label.to(device).float())
+            # todo these switch for some reason....
+            list_in_len = torch.tensor([x[0].item() for x in list_in_len])
+            list_targ_len = torch.tensor([x[0].item() for x in list_targ_len])
+
+            print(list_in_len)
+            print(list_targ_len)
+            print('\n\n\n\n\n\n')
+
+            loss = criterion(out, label.to(device).float(), list_in_len, list_targ_len)
             loss.backward()
             optimizer.step()
             avg_loss += loss.item()
