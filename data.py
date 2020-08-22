@@ -35,7 +35,6 @@ def get_data(filepath):
     _len = [x.shape[1] for x in dataset['audio']]
     _lab_len = [len(x) for x in dataset['label']]
 
-
     padded_data = []
     padded_label = []
 
@@ -79,9 +78,11 @@ class AudioDataset(torch.utils.data.Dataset):
   def __getitem__(self, index):
     # select sample
     ID = self.list_IDs[index]
+    original_len = self.input_lengths[index]
+    original_label_len = self.label_lengths[index]
 
     # Load data 
     X = self.data[self.data['unique_id'] == ID]['padded_audio'].values[0]
     y = self.labels[ID]
 
-    return self.label_lengths, self.input_lengths, self.list_IDs, torch.from_numpy(X), torch.tensor(y) 
+    return self.original_len, self.original_label_len, self.list_IDs, torch.from_numpy(X), torch.tensor(y) 
