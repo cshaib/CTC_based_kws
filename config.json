@@ -3,19 +3,8 @@
         "pretrain_label_data": "/Users/chantal/Desktop/StMichaels/669_audio_debug_only.csv",
         "train_wakeword_data": "",
         "test_data": "",
-        "batch_size": 16
+        "batch_size": 16,
+        "query_by_string": True
  } 
 
 
-
- #!/bin/bash
-
-#SBATCH --job-name=speech
-#SBATCH --output=./results/
-#SBATCH --mem=4GB
-#SBATCH --gres=gpu:1
-#SBATCH --time=5:00:00
-#SBATCH --partition=nlp
-
-module use /pkgs/environment-modules/
-srun ./DeepXi/run.sh VER="resnet-1.0c" TRAIN=1 GAIN="mmse-lsa" 

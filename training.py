@@ -17,10 +17,12 @@ from model import LabelModel
 
 from blick import BlickLoader
 
-def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate, hidden_dim=256, EPOCHS=5, batch_size=16, n_mfcc=30):
-    
-    ####################### TODO: Add to config file ####################### 
+""" TODO: 
+    - add config file
+    -
+"""
 
+def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate, hidden_dim=256, EPOCHS=5, batch_size=16, n_mfcc=30):
     # Setting common hyperparameters
     input_dim = (max_input_len, n_mfcc)
     # sample data
@@ -102,7 +104,7 @@ def train_wakeword_model(audio_train_loader, vocab_list, label_model, beam_size=
         # load ww model produced by MFA from config 
         keywords = config["wakeword_model"]
         # load blick 
-        b = BlickLoader
+        b = BlickLoader()
 
         for i, _, y_hat in enumerate(keywords.items()): 
             w = b.assessWord(y_hat)
@@ -140,7 +142,6 @@ def evaluate_audio(audio, wakeword_model, label_model):
 
     for y_hat, w in wakeword_model.values():
         log_prob_post_test = CTCForward(posterior_test, y_hat)
-
         score += score + log_prob_post_test * w
 
     return score

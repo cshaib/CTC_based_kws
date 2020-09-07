@@ -41,7 +41,7 @@ def main():
 
     # get keywords of interest, train wakeword model
     keyword_data_generator = get_data(config["train_wakeword_data"])
-    wakeword_model = train_wakeword_model(keyword_data_generator, label_set, label_model, query_by_string=True)
+    wakeword_model = train_wakeword_model(keyword_data_generator, label_set, label_model, query_by_string=config["query_by_string"])
 
     # evaluate on new audio 
     test_data_generator = get_data(config["test_data"])

@@ -21,7 +21,7 @@ class LabelModel(nn.Module):
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
 
-        # data shape: [batch, seq, feature] --> [16, 35843, 30]
+        # data shape: [batch, seq, feature] --> (e.g.,) [16, 35843, 30]
         self.gru = nn.GRU(input_dim, hidden_dim, n_layers, batch_first=True, dropout=drop_prob)
         self.linear = nn.Linear(hidden_dim, 42)
         self.relu = nn.ReLU()
@@ -31,12 +31,7 @@ class LabelModel(nn.Module):
         x = x.permute(0, 2, 1)
         # x = x.unsqueeze(-1)
         out, h = self.gru(x, h)
-        # print(out.shape, h.shape, 'OUT AND H SHAPE AFTER GRU')
-        # out = self.linear(self.relu(out[:,-1]))
-        # print(out.shape, "OUT AFTER LINEAR")
         out = self.softmax(out, dim=2)
-        # out = out.transpose(0,1)
-        print(out.shape)
         return out, h
     
     def init_hidden(self, batch_size):

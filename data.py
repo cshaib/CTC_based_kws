@@ -24,11 +24,11 @@ def get_data(filepath):
     total_len = len(ids)
     np.random.shuffle(ids)
 
-
-    # set parameters for DataLoader -- num_workers = cores
+    # set parameters for DataLoader -- num_workers = cores, drop_last = uneven batching
     params = {'batch_size': 16,
               'shuffle': True,
-              'num_workers': 0
+              'num_workers': 0,
+              'drop_last': True
               }
 
     # create data generator
