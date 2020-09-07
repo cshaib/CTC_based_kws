@@ -39,4 +39,3 @@ class LabelModel(nn.Module):
         hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
         return hidden
 
-9

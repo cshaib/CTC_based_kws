@@ -31,10 +31,9 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
     output_dim = num_labels + 1 # len labels that I want to output (length of the num diff labels + CTC blank symbol)
     n_layers = 3 # following paper params
 
-    print(input_dim, output_dim, n_layers)
+#    print(input_dim, output_dim, n_layers)
 
     # create model TODO: DOUBLE CHECK OUTPUT DIMENSION 
-    # print(one_example[3].shape[1:], 'SHAPE')
     label_model = LabelModel(input_dim=n_mfcc, hidden_dim=96, output_dim=149, n_layers=3)
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -55,10 +54,9 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
         h = label_model.init_hidden(batch_size)
 
         avg_loss = 0.
-        counter = 0
         
         for counter, (original_len, original_label_len, _, x, label) in enumerate(label_train_loader):
-
+            print(counter)
             h = h.data
             # print(h.shape, x.shape)
             label_model.zero_grad()
@@ -73,24 +71,22 @@ def train_label_model(max_input_len, label_train_loader, num_labels, learn_rate,
 #            print(list_targ_len)
 #            print('\n\n\n\n\n\n')
             
-            print(len(original_len), len(original_label_len))
-            loss = criterion(out, label.to(device).float(), original_len, original_label_len)
+#            print(len(original_len), len(original_label_len))
+#            print(original_len, original_label_len)
+#            print(out.shape)
+            out = out.permute(1,0,2)
+            loss = criterion(out, label, original_len, original_label_len)
             loss.backward()
             optimizer.step()
             avg_loss += loss.item()
 
-            if counter%200 == 0:
-                print(f"Epoch {epoch}......Step: {counter}/{len(label_train_loader)}....... \
+            if counter+1%2 == 0:
+                print(f"Epoch {epoch}, Step: {counter}/{len(label_train_loader)}....... \
                         Average Loss for Epoch: {avg_loss/counter}")
         
         current_time = time.clock()
         print(f"Epoch {epoch}/{EPOCHS} Done, Total Loss: {avg_loss/len(label_train_loader)}")
 
-        print(f"Total Time Elapsed: {str(current_time-start_time)} seconds")
-
-        epoch_times.append(current_time-start_time)
-
-    print("Total Training Time: {} seconds".format(str(sum(epoch_times))))
 
     torch.save(label_model, "pretrained_label_model.pt")
 
